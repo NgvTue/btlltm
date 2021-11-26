@@ -165,22 +165,20 @@ public class Room extends javax.swing.JFrame {
         }
     }
     public void resetRoom(){
-        for(int i=0;i<users.size();i++){
-            if(users.get(i).isActiveVideo()==false){
-                if(i==0){
-                    jLabel1.setIcon(null);
-                }
-                if(i==1){
-                    jLabel2.setIcon(null);
-                }
-                if(i==2){
-                    jLabel3.setIcon(null);
-                }
-                if(i==3){
-                    jLabel4.setIcon(null);
-                }
-            }
-        }
+        
+        jLabel1.setIcon(null);
+
+
+        jLabel2.setIcon(null);
+
+
+        jLabel3.setIcon(null);
+
+
+        jLabel4.setIcon(null);
+                
+            
+        
     }
     public Room(User user) {
         try {
