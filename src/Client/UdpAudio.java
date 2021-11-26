@@ -5,7 +5,7 @@
 package Client;
 
 import Config.UDPconfig;
-import Server.UdpAudioCenter;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -49,7 +49,7 @@ public class UdpAudio extends Thread{
             NetworkInterface ni = NetworkInterface.getByName(interfaceN);
             InetSocketAddress group = new InetSocketAddress(groupAd, portMultiAudio);
             socket.joinGroup(group, ni);
-            byte[] buf = new byte[UDPconfig.getDefaultDataLenght()];
+            byte[] buf = new byte[UDPconfig.getDefaultDataLenght() + 1000];
             DatagramPacket receivePacket = new DatagramPacket(buf, buf.length);
             
             while(true){
@@ -57,15 +57,13 @@ public class UdpAudio extends Thread{
                 byte[] bufs = receivePacket.getData().clone();
                 ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(bufs));
                 Messenger messageRec = (Messenger) iStream.readObject();
-                
                 this.room.receiveAudio(messageRec);
-               
-                
+
             }
         } catch (IOException ex) {
-            Logger.getLogger(UdpAudioCenter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UdpAudio.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UdpAudioCenter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UdpAudio.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         

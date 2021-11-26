@@ -5,7 +5,7 @@
 package Client;
 
 import Config.UDPconfig;
-import Server.UdpVideoCenter;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -62,7 +62,7 @@ public class UdpVideo extends Thread{
                 
             }
         } catch (IOException ex) {
-            Logger.getLogger(UdpVideoCenter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UdpVideo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UdpVideo.class.getName()).log(Level.SEVERE, null, ex);
         }

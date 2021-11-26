@@ -5,7 +5,7 @@
 package Client;
 
 import Config.UDPconfig;
-import Server.UdpAudioCenter;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -61,9 +61,9 @@ public class UdpText extends Thread{
                 
             }
         } catch (IOException ex) {
-            Logger.getLogger(UdpAudioCenter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UdpText.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UdpAudioCenter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UdpText.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         
