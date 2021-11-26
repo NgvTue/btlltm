@@ -220,11 +220,12 @@ public class TcpCenter {
                 myProcess.remove(this);
                 
                 ObjectWrapper informToAnother = new ObjectWrapper();
-                informToAnother.setPerformative(ObjectWrapper.CLIENT_CONNECT);
-                informToAnother.setData(user);
+                informToAnother.setPerformative(ObjectWrapper.CLIENT_DISCONNECT);
+                users.remove(user);
+                informToAnother.setData(users);
                 callClient(informToAnother);
                 
-                users.remove(user);
+                
                 
                 this.stop();
                 
