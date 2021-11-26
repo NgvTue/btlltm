@@ -115,6 +115,7 @@ public class Room extends javax.swing.JFrame {
                     ObjectWrapper obj =(ObjectWrapper)ois.readObject();
                     if(obj.getPerformative()==ObjectWrapper.CLIENT_CONNECT ||obj.getPerformative()==ObjectWrapper.CLIENT_DISCONNECT ){
                         users = (ArrayList<User>) obj.getData();
+                        System.out.println("Number user in room = " + users.size());
                     }
                 }
             } catch (IOException ex) {
