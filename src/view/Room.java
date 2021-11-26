@@ -5,6 +5,7 @@
 package view;
 
 import Client.UdpAudio;
+import Client.UdpText;
 import Client.UdpVideo;
 import Config.TcpConfig;
 import Config.UDPconfig;
@@ -48,7 +49,11 @@ public class Room extends javax.swing.JFrame {
     private ArrayList<User> users;
     private User user;
     private UdpVideo udpVideo; 
+    
+    
     private UdpAudio udpAudio;
+    
+    private UdpText udpText;
     private ServerProcessing repTcpServer;
     
     private SourceDataLine speaker;
@@ -68,7 +73,7 @@ public class Room extends javax.swing.JFrame {
             byte[] buf = (byte[]) messageRec.getMess();
             InputStream is  = new ByteArrayInputStream(buf);
             BufferedImage bi = ImageIO.read(is);
-            if(index == 0){
+            if(index == 0 ){
                 jLabel1.setIcon(new ImageIcon(bi));
             }
             if(index == 1){
@@ -92,10 +97,29 @@ public class Room extends javax.swing.JFrame {
             System.out.println("run speaker : " + messageRec.getUser().getUsername());
         }
     }
+
+    public void receiveText(Messenger messageRec) {
+        User u = messageRec.getUser();
+        String mess = (String) messageRec.getMess();
+        jTextArea1.append("\n"+u.getUsername() +" : " +  mess);
+        // send tcp luu lai lich su chat
+        ObjectWrapper data = new ObjectWrapper();
+        data.setPerformative(ObjectWrapper.SEND_TEXT);
+        data.setData(u.getUsername() +" : " +  mess);
+        repTcpServer.send(data);
+    }
     class ServerProcessing extends Thread{
         private Socket mySocket;
         ObjectOutputStream oos;
         ObjectInputStream ois ;
+        public void send(ObjectWrapper data){
+            
+            try {
+                oos.writeObject(data); //
+            } catch (IOException ex) {
+                Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         public void run() {
             try {
                 mySocket =  new Socket(TcpConfig.getHost(),  TcpConfig.getPort());
@@ -115,17 +139,20 @@ public class Room extends javax.swing.JFrame {
                     Object dat = ois.readObject();
                     if(dat instanceof ObjectWrapper){
                         ObjectWrapper recData =(ObjectWrapper)dat;
-                        if(recData.getPerformative()==ObjectWrapper.CLIENT_CONNECT ||recData.getPerformative()==ObjectWrapper.CLIENT_DISCONNECT ){
+                        if(recData.getPerformative()==ObjectWrapper.CLIENT_CONNECT ||recData.getPerformative()==ObjectWrapper.CLIENT_DISCONNECT
+                                ||recData.getPerformative() == ObjectWrapper.UPDATE_USERS){
                             ArrayList<User> usersx = (ArrayList<User>) recData.getData();
                             System.out.println("Number user in room = " + ((ArrayList<User>) recData.getData()).size() + " -- " + recData.getPerformative());
                             users = (ArrayList<User>) usersx.clone();
                             for(User u : users){
-                                System.out.println(u.getUsername());
+                                System.out.println(u.getUsername() + " " + u.isActiveVideo());
                             }
+                            resetRoom();
                         }
-                        else
-                        {
-                            System.out.println(recData.getData());
+                        if(recData.getPerformative() == ObjectWrapper.INFORM_HISTORY_CHAT){
+                            String history = (String) recData.getData();
+                            jTextArea1.setText(history);
+                            System.out.println(history);
                         }
                     }
                     
@@ -139,7 +166,20 @@ public class Room extends javax.swing.JFrame {
     }
     public void resetRoom(){
         for(int i=0;i<users.size();i++){
-            
+            if(users.get(i).isActiveVideo()==false){
+                if(i==0){
+                    jLabel1.setIcon(null);
+                }
+                if(i==1){
+                    jLabel2.setIcon(null);
+                }
+                if(i==2){
+                    jLabel3.setIcon(null);
+                }
+                if(i==3){
+                    jLabel4.setIcon(null);
+                }
+            }
         }
     }
     public Room(User user) {
@@ -152,7 +192,15 @@ public class Room extends javax.swing.JFrame {
             udpVideo = new UdpVideo();
             udpVideo.setRoom(this);
             udpVideo.start();
+            handleVideo();
             
+            udpAudio = new UdpAudio();
+            udpAudio.setRoom(this);
+            udpAudio.start();
+            
+            udpText = new UdpText();
+            udpText.setRoom(this);
+            udpText.start();
             
             AudioFormat af = UDPconfig.getDefaultFormat();
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, null);
@@ -209,6 +257,11 @@ public class Room extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTextArea1);
 
         jButton1.setText("send");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("cam");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -310,26 +363,28 @@ public class Room extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    public void handleVideo(){
         Webcam webcam = Webcam.getDefault();
         webcam.setViewSize(new Dimension(320,240));
         webcam.open();
-        
-        Thread runnable = new Thread() {
+        Thread runnableVideo = new Thread() {
             @Override
             public void run() {
-                
+
                 try {
-                    
+
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     while(true){
-                        
+                        if(user.isActiveVideo() == false){
+                            if(webcam.isOpen())webcam.close();
+                            continue;
+                        }
+                        if(webcam.isOpen() == false)webcam.open();
                         BufferedImage image = webcam.getImage();
 
                         System.out.println(image.getHeight() + "-" + image.getWidth() + "-" + image.toString());
-                          
-                        
+
+
                         ImageIO.write(image, "JPG", baos);
                         byte[] buf = baos.toByteArray();
                         Messenger messageClass = new Messenger();
@@ -353,7 +408,18 @@ public class Room extends javax.swing.JFrame {
                 }
             }
         };
-        runnable.start();
+        runnableVideo.start();
+    }
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+        this.user.setActiveVideo(!this.user.isActiveVideo());
+        // inform open cam
+        ObjectWrapper data = new ObjectWrapper();
+        data.setPerformative(ObjectWrapper.VIDEO_SWITCH);
+        data.setData(this.user.isActiveVideo());
+        
+        repTcpServer.send(data);
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -374,6 +440,12 @@ public class Room extends javax.swing.JFrame {
                             while (mic.available() >= UDPconfig.defaultDataLenght) { //flush old data from mic to reduce lag, and read most recent data
                                 mic.read(buf, 0, buf.length); //read from microphone
                                 byte[] bufClone = buf.clone();
+                                long tot = 0;
+                                for (int i = 0; i < buf.length; i++) {
+                                    buf[i] *= 1.0;
+                                    tot += Math.abs(buf[i]); // tong cac gia tri |x| bien do cua am thanh
+                                }
+                                if(tot==0)continue;
                                 Messenger mess = new Messenger();
                                 mess.setUser(user);
                                 mess.setMess(bufClone);
@@ -400,6 +472,27 @@ public class Room extends javax.swing.JFrame {
         };
         runnable.start();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            // TODO add your handling code here:
+            String text = jTextField1.getText();
+            Messenger mess = new Messenger();
+            mess.setUser(user);
+            mess.setMess(text);
+            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+            ObjectOutput oo = new ObjectOutputStream(bStream);
+            oo.writeObject(mess);
+            oo.close();
+            
+            byte[] serializedMessage = bStream.toByteArray();
+            
+            udpText.sendToAllClients(serializedMessage);
+            jTextField1.setText("");
+        } catch (IOException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

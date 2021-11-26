@@ -38,6 +38,73 @@ public class ObjectWrapper implements Serializable{
     public static final int REFRESH_LIST = 1;
     public static final int SEND_FILE = 2;
     public static final int KEEP_SEND_FILE=3;
+    public static final int VIDEO_SWITCH = 14;
+    public static final int AUDIO_SWITCH=15;
+    public static final int UPDATE_USERS=16;
+
+    public static int getSERVER_INFORM_CLIENT_NUMBER() {
+        return SERVER_INFORM_CLIENT_NUMBER;
+    }
+
+    public static int getCLIENT_CONNECT() {
+        return CLIENT_CONNECT;
+    }
+
+    public static int getCLIENT_DISCONNECT() {
+        return CLIENT_DISCONNECT;
+    }
+
+    public static int getADMIN_CONNECT() {
+        return ADMIN_CONNECT;
+    }
+
+    public static int getLOGIN() {
+        return LOGIN;
+    }
+
+    public static int getREGISTER() {
+        return REGISTER;
+    }
+
+    public static int getINFORM_USER() {
+        return INFORM_USER;
+    }
+
+    public static int getINFORM_ROOM() {
+        return INFORM_ROOM;
+    }
+
+    public static int getINFORM_HISTORY_CHAT() {
+        return INFORM_HISTORY_CHAT;
+    }
+
+    public static int getSEND_TEXT() {
+        return SEND_TEXT;
+    }
+
+    public static int getJOIN_ROOM() {
+        return JOIN_ROOM;
+    }
+
+    public static int getSEND_FILE() {
+        return SEND_FILE;
+    }
+
+    public static int getKEEP_SEND_FILE() {
+        return KEEP_SEND_FILE;
+    }
+
+    public static int getVIDEO_SWITCH() {
+        return VIDEO_SWITCH;
+    }
+
+    public static int getAUDIO_SWITCH() {
+        return AUDIO_SWITCH;
+    }
+
+    public static int getUPDATE_USERS() {
+        return UPDATE_USERS;
+    }
     private int performative;
     private Object data;
     

@@ -166,22 +166,34 @@ public class TcpCenter {
             super();
             mySocket = s;
             oos= new ObjectOutputStream(mySocket.getOutputStream());
-            oos.flush();
             ois = new ObjectInputStream(mySocket.getInputStream());
             
         }
          
         public void sendData(ObjectWrapper obj) {
             try {
-                if(obj.getPerformative() == ObjectWrapper.CLIENT_CONNECT || obj.getPerformative() == ObjectWrapper.CLIENT_DISCONNECT){
+                if(obj.getPerformative() == ObjectWrapper.CLIENT_CONNECT || obj.getPerformative() == ObjectWrapper.CLIENT_DISCONNECT
+                        || obj.getPerformative()==ObjectWrapper.UPDATE_USERS){
+                    
                     ArrayList<User> send = (ArrayList<User>) users.clone();
 //                    send.add(new User());
                     obj.setData(send);
+                }
+                if(obj.getPerformative() == ObjectWrapper.INFORM_HISTORY_CHAT){
+                    String T = text;
+                    obj.setData(T);
                 }
                 oos.writeObject(obj);
             } catch(Exception e) {
                 e.printStackTrace();
             }
+        }
+        public void setVideoActive(boolean  v){
+            int index=-1;
+            for(int i=0;i<users.size();i++){
+                if(users.get(i).getUsername().equalsIgnoreCase(user.getUsername()))index = i;
+            }
+            users.get(index).setActiveVideo(v);
         }
         public void run() { 
             try {
@@ -214,8 +226,16 @@ public class TcpCenter {
                             allText.setData(text);
                             allText.setPerformative(ObjectWrapper.INFORM_HISTORY_CHAT);
                             sendData(allText);
+                            System.out.println("here" + text);
+                            
+                        }
+                        if(data.getPerformative() == ObjectWrapper.SEND_FILE){
+                            String mess = (String) data.getData();
+                            text = text + "\n" + mess;
+                            System.out.println("here " + text);
                         }
                         
+//                        
                         
                     }
                     
