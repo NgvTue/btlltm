@@ -202,6 +202,7 @@ public class TcpCenter {
                             ObjectWrapper informToAnother = new ObjectWrapper();
                             informToAnother.setPerformative(ObjectWrapper.CLIENT_CONNECT);
                             informToAnother.setData(users);
+                            System.out.println("number user = " + ((ArrayList<User>)informToAnother.getData()).size());
                             callClient(informToAnother);
                             // get texts
                             ObjectWrapper allText = new ObjectWrapper();
@@ -223,10 +224,8 @@ public class TcpCenter {
                 informToAnother.setPerformative(ObjectWrapper.CLIENT_DISCONNECT);
                 users.remove(user);
                 informToAnother.setData(users);
+                System.out.println("number user = " + ((ArrayList<User>)informToAnother.getData()).size());
                 callClient(informToAnother);
-                
-                
-                
                 this.stop();
                 
             } catch (IOException ex) {

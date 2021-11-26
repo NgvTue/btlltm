@@ -111,11 +111,12 @@ public class Room extends javax.swing.JFrame {
                 
                 // nhan lai list cac user trong phong
                 
-                while(true){
+                while(true){    
                     ObjectWrapper obj =(ObjectWrapper)ois.readObject();
                     if(obj.getPerformative()==ObjectWrapper.CLIENT_CONNECT ||obj.getPerformative()==ObjectWrapper.CLIENT_DISCONNECT ){
-                        users = (ArrayList<User>) obj.getData();
-                        System.out.println("Number user in room = " + users.size());
+                        ArrayList<User> usersx = (ArrayList<User>) obj.getData();
+                        System.out.println("Number user in room = " + usersx.size());
+                        users = (ArrayList<User>) usersx.clone();
                     }
                 }
             } catch (IOException ex) {
