@@ -171,8 +171,13 @@ public class TcpCenter {
             
         }
          
-        public void sendData(Object obj) {
+        public void sendData(ObjectWrapper obj) {
             try {
+                if(obj.getPerformative() == ObjectWrapper.CLIENT_CONNECT || obj.getPerformative() == ObjectWrapper.CLIENT_DISCONNECT){
+                    ArrayList<User> send = (ArrayList<User>) users.clone();
+//                    send.add(new User());
+                    obj.setData(send);
+                }
                 oos.writeObject(obj);
             } catch(Exception e) {
                 e.printStackTrace();
@@ -198,11 +203,11 @@ public class TcpCenter {
                             this.user=user;
                             System.out.println("Client login server!!!! : " + user.getUsername());
                             // gui mess sang cac tcp khac
-                            users.add(user);
+                            users.add(this.user);
                             ObjectWrapper informToAnother = new ObjectWrapper();
                             informToAnother.setPerformative(ObjectWrapper.CLIENT_CONNECT);
                             informToAnother.setData(users);
-                            System.out.println("number user = " + ((ArrayList<User>)informToAnother.getData()).size());
+                            
                             callClient(informToAnother);
                             // get texts
                             ObjectWrapper allText = new ObjectWrapper();
@@ -216,16 +221,16 @@ public class TcpCenter {
                     
                 }
             } catch (EOFException | SocketException e) {             
-               
-                   
-                myProcess.remove(this);
                 
+                myProcess.remove(this);
                 ObjectWrapper informToAnother = new ObjectWrapper();
                 informToAnother.setPerformative(ObjectWrapper.CLIENT_DISCONNECT);
                 users.remove(user);
                 informToAnother.setData(users);
-                System.out.println("number user = " + ((ArrayList<User>)informToAnother.getData()).size());
                 callClient(informToAnother);
+                
+                
+                
                 this.stop();
                 
             } catch (IOException ex) {
