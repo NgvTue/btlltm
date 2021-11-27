@@ -13,6 +13,8 @@ import java.io.Serializable;
 public class ObjectWrapper implements Serializable{
     
     private static final long serialVersionUID = 20210811011L;
+    private int performative;
+    private Object data;
     public static final int SERVER_INFORM_CLIENT_NUMBER = -1;
     
     public static final int CLIENT_CONNECT=4;
@@ -32,8 +34,6 @@ public class ObjectWrapper implements Serializable{
     public static final int SEND_TEXT=12;
             
     public static final int JOIN_ROOM=13;
-    
-    
     public static final int PING_HEALTH = 0;
     public static final int REFRESH_LIST = 1;
     public static final int SEND_FILE = 2;
@@ -105,8 +105,7 @@ public class ObjectWrapper implements Serializable{
     public static int getUPDATE_USERS() {
         return UPDATE_USERS;
     }
-    private int performative;
-    private Object data;
+    
     
     public  ObjectWrapper(){
         super();

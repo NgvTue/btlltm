@@ -33,6 +33,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import model.Messenger;
 import model.ObjectWrapper;
 import model.User;
@@ -46,16 +47,17 @@ public class Room extends javax.swing.JFrame {
     /**
      * Creates new form Room
      */
+    
     private ArrayList<User> users;
     private User user;
+    
     private UdpVideo udpVideo; 
-    
-    
     private UdpAudio udpAudio;
-    
     private UdpText udpText;
+    
     private ServerProcessing repTcpServer;
     
+    ArrayList<JLabel > viewImages;
     private SourceDataLine speaker;
     public void receiveImage(Messenger messageRec) {
         try {
@@ -76,6 +78,9 @@ public class Room extends javax.swing.JFrame {
             byte[] buf = (byte[]) messageRec.getMess();
             InputStream is  = new ByteArrayInputStream(buf);
             BufferedImage bi = ImageIO.read(is);
+            
+            
+            
             if(index == 0 ){
                 jLabel1.setIcon(new ImageIcon(bi));
             }
