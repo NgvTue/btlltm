@@ -77,4 +77,37 @@ public class UdpVideo extends Thread{
         socket.send(packet);
 
     }
+
+    public MulticastSocket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(MulticastSocket socket) {
+        this.socket = socket;
+    }
+
+    public static int getPortMultiVideo() {
+        return portMultiVideo;
+    }
+
+    public static void setPortMultiVideo(int portMultiVideo) {
+        UdpVideo.portMultiVideo = portMultiVideo;
+    }
+
+    public static String getGroupVideo() {
+        return groupVideo;
+    }
+
+    public static void setGroupVideo(String groupVideo) {
+        UdpVideo.groupVideo = groupVideo;
+    }
+
+    public static String getInterfaceN() {
+        return interfaceN;
+    }
+
+    public static void setInterfaceN(String interfaceN) {
+        UdpVideo.interfaceN = interfaceN;
+    }
+    
 }

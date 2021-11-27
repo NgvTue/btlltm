@@ -29,7 +29,7 @@ public class UdpText extends Thread{
     private MulticastSocket socket ; // ban request len multicast group
     private static int portMultiAudio =Integer.parseInt(UDPconfig.getPortText());
     private static String groupAudio = UDPconfig.getGroupText();
-    private static String interfaceN = UDPconfig.getNetworkInterface();
+    private static String interfaceN = UDPconfig.getNetworkInterface(); // WLP5S
     private Room room;
 
     public Room getRoom() {
@@ -44,10 +44,13 @@ public class UdpText extends Thread{
 
         try {
             socket = new MulticastSocket(portMultiAudio);
+            
             InetAddress groupAd = InetAddress.getByName(groupAudio);
             NetworkInterface ni = NetworkInterface.getByName(interfaceN);
             InetSocketAddress group = new InetSocketAddress(groupAd, portMultiAudio);
+            
             socket.joinGroup(group, ni);
+            
             byte[] buf = new byte[UDPconfig.getDefaultDataLenght()];
             DatagramPacket receivePacket = new DatagramPacket(buf, buf.length);
             
@@ -81,4 +84,37 @@ public class UdpText extends Thread{
         
         
     }
+
+    public MulticastSocket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(MulticastSocket socket) {
+        this.socket = socket;
+    }
+
+    public static int getPortMultiAudio() {
+        return portMultiAudio;
+    }
+
+    public static void setPortMultiAudio(int portMultiAudio) {
+        UdpText.portMultiAudio = portMultiAudio;
+    }
+
+    public static String getGroupAudio() {
+        return groupAudio;
+    }
+
+    public static void setGroupAudio(String groupAudio) {
+        UdpText.groupAudio = groupAudio;
+    }
+
+    public static String getInterfaceN() {
+        return interfaceN;
+    }
+
+    public static void setInterfaceN(String interfaceN) {
+        UdpText.interfaceN = interfaceN;
+    }
+    
 }

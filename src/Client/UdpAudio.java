@@ -82,4 +82,37 @@ public class UdpAudio extends Thread{
         
         
     }
+
+    public MulticastSocket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(MulticastSocket socket) {
+        this.socket = socket;
+    }
+
+    public static int getPortMultiAudio() {
+        return portMultiAudio;
+    }
+
+    public static void setPortMultiAudio(int portMultiAudio) {
+        UdpAudio.portMultiAudio = portMultiAudio;
+    }
+
+    public static String getGroupAudio() {
+        return groupAudio;
+    }
+
+    public static void setGroupAudio(String groupAudio) {
+        UdpAudio.groupAudio = groupAudio;
+    }
+
+    public static String getInterfaceN() {
+        return interfaceN;
+    }
+
+    public static void setInterfaceN(String interfaceN) {
+        UdpAudio.interfaceN = interfaceN;
+    }
+    
 }

@@ -48,6 +48,8 @@ public class TcpCenter {
     private String text="";
     private IPAddress myAddress = new IPAddress(TcpConfig.getHost(), TcpConfig.getPort());  // default server host and port
     
+    
+    private DAO dao;
   
     
     public ServerSocket getMyServer() {
@@ -75,6 +77,8 @@ public class TcpCenter {
         users = new ArrayList<>();
         text = "";
         openServer();
+        dao  = new DAO(TcpConfig.getUrl(), TcpConfig.getUsername(), TcpConfig.getPassword());
+        dao.connectDao();
        
     }
      
@@ -172,17 +176,14 @@ public class TcpCenter {
          
         public void sendData(ObjectWrapper obj) {
             try {
-                if(obj.getPerformative() == ObjectWrapper.CLIENT_CONNECT || obj.getPerformative() == ObjectWrapper.CLIENT_DISCONNECT
-                        || obj.getPerformative()==ObjectWrapper.UPDATE_USERS){
-                    
-                    ArrayList<User> send = (ArrayList<User>) users.clone();
-//                    send.add(new User());
-                    obj.setData(send);
-                }
-                if(obj.getPerformative() == ObjectWrapper.INFORM_HISTORY_CHAT){
-                    String T = text;
-                    obj.setData(T);
-                }
+//                if(obj.getPerformative() == ObjectWrapper.CLIENT_CONNECT || obj.getPerformative() == ObjectWrapper.CLIENT_DISCONNECT
+//                        || obj.getPerformative()==ObjectWrapper.UPDATE_USERS){
+//                    
+//                    ArrayList<User> send = (ArrayList<User>) users.clone();
+////                    send.add(new User());
+//                    obj.setData(send);
+//                }
+                
                 oos.writeObject(obj);
             } catch(Exception e) {
                 e.printStackTrace();
@@ -214,29 +215,46 @@ public class TcpCenter {
                             user.setIpAddress(mySocket.getInetAddress().getAddress().toString());
                             this.user=user;
                             System.out.println("Client login server!!!! : " + user.getUsername());
+                            dao.joinRoom(this.user);
                             // gui mess sang cac tcp khac
                             users.add(this.user);
                             ObjectWrapper informToAnother = new ObjectWrapper();
                             informToAnother.setPerformative(ObjectWrapper.CLIENT_CONNECT);
-                            informToAnother.setData(users);
+                            informToAnother.setData(
+                                dao.getAllUser()
+                            );
                             
                             callClient(informToAnother);
                             // get texts
                             ObjectWrapper allText = new ObjectWrapper();
-                            allText.setData(text);
+                            String m = dao.getMess();
+                            System.out.println("historty " + m);
+                            
                             allText.setPerformative(ObjectWrapper.INFORM_HISTORY_CHAT);
+                            allText.setData(m);
                             sendData(allText);
                             System.out.println("here" + text);
                             
                         }
-                        if(data.getPerformative() == ObjectWrapper.SEND_FILE){
+                        
+                        if(data.getPerformative() == ObjectWrapper.SEND_TEXT){
                             String mess = (String) data.getData();
                             text = text + "\n" + mess;
-                            System.out.println("here " + text);
+                            dao.addMess(this.user, mess);
+                            System.out.println("here ne" + text);
                         }
                         
-//                        
-                        
+                        if(data.getPerformative()==ObjectWrapper.VIDEO_SWITCH){
+                            boolean v = (boolean) data.getData();
+                            this.user.setActiveVideo(v);
+                            dao.updateVideoActive(this.user);
+                            ObjectWrapper informToAnother = new ObjectWrapper();
+                            informToAnother.setPerformative(ObjectWrapper.UPDATE_USERS);
+                            informToAnother.setData(
+                                dao.getAllUser()
+                            );
+                            callClient(informToAnother);
+                        }
                     }
                     
                 }
@@ -246,11 +264,9 @@ public class TcpCenter {
                 ObjectWrapper informToAnother = new ObjectWrapper();
                 informToAnother.setPerformative(ObjectWrapper.CLIENT_DISCONNECT);
                 users.remove(user);
-                informToAnother.setData(users);
+                dao.outRoom(user);
+                informToAnother.setData(dao.getAllUser());
                 callClient(informToAnother);
-                
-                
-                
                 this.stop();
                 
             } catch (IOException ex) {

@@ -66,10 +66,13 @@ public class Room extends javax.swing.JFrame {
                     index = i;
                 }
             }
+            
             if(index!=-1){
                 System.out.println("receive video from " + user.getUsername());
             }
-            
+            if(users.get(index).isActiveVideo()==false){
+                return;
+            }
             byte[] buf = (byte[]) messageRec.getMess();
             InputStream is  = new ByteArrayInputStream(buf);
             BufferedImage bi = ImageIO.read(is);
@@ -102,11 +105,7 @@ public class Room extends javax.swing.JFrame {
         User u = messageRec.getUser();
         String mess = (String) messageRec.getMess();
         jTextArea1.append("\n"+u.getUsername() +" : " +  mess);
-        // send tcp luu lai lich su chat
-        ObjectWrapper data = new ObjectWrapper();
-        data.setPerformative(ObjectWrapper.SEND_TEXT);
-        data.setData(u.getUsername() +" : " +  mess);
-        repTcpServer.send(data);
+        
     }
     class ServerProcessing extends Thread{
         private Socket mySocket;
@@ -152,7 +151,7 @@ public class Room extends javax.swing.JFrame {
                         if(recData.getPerformative() == ObjectWrapper.INFORM_HISTORY_CHAT){
                             String history = (String) recData.getData();
                             jTextArea1.setText(history);
-                            System.out.println(history);
+                            System.out.println(history + " his");
                         }
                     }
                     
@@ -336,7 +335,7 @@ public class Room extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(50, 50, 50)
                         .addComponent(jButton2)
-                        .addGap(137, 137, 137)
+                        .addGap(455, 455, 455)
                         .addComponent(jButton3)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -353,7 +352,7 @@ public class Room extends javax.swing.JFrame {
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1))))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
                 .addContainerGap())
@@ -487,6 +486,12 @@ public class Room extends javax.swing.JFrame {
             
             udpText.sendToAllClients(serializedMessage);
             jTextField1.setText("");
+            
+            ObjectWrapper data = new ObjectWrapper();
+            data.setPerformative(ObjectWrapper.SEND_TEXT);
+            data.setData(text);
+            repTcpServer.send(data);
+            
         } catch (IOException ex) {
             Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
         }

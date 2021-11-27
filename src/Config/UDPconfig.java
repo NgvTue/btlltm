@@ -56,16 +56,16 @@ public class UDPconfig {
         return max_through;
     }
     
-    private static final String networkInterface="wlp5s0";
+    private static  String networkInterface="wlp5s0";
     
-    private static final String groupText="224.2.2.3";
-    private static final String hostText="localhost";
-    private static final String portText="4444";
-    private static final String portTextRc="4455";
-    private static final String groupVideo="224.3.4.4";
-    private static final String hostVideo="localhost";
-    private static final String portVideo="6666";
-    private static final String portVideoRe="6677";
+    private static  String groupText="224.2.2.3";
+    private static  String hostText="localhost";
+    private static  String portText="4444";
+    private static  String portTextRc="4455";
+    private static  String groupVideo="224.3.4.4";
+    private static  String hostVideo="localhost";
+    private static  String portVideo="6666";
+    private static  String portVideoRe="6677";
 
     public static String getPortTextRc() {
         return portTextRc;
@@ -79,10 +79,10 @@ public class UDPconfig {
         return portAudioRe;
     }
     
-    private static final String groupAudio="224.3.6.6";
-    private static final String hostAudio="localhost";
-    private static final String portAudio="7777";
-    private static final String portAudioRe="7788";
+    private static  String groupAudio="224.3.6.6";
+    private static  String hostAudio="localhost";
+    private static  String portAudio="7777";
+    private static  String portAudioRe="7788";
     
     
     private static final int max_through = 512; // 512 byte
