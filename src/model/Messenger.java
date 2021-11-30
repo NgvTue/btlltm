@@ -13,7 +13,15 @@ import java.io.Serializable;
 public class Messenger implements Serializable{
     private User user;
     private Object mess;
+    private String type="video";
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
     public User getUser() {
         return user;
     }

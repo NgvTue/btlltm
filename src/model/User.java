@@ -16,6 +16,7 @@ public class User implements Serializable{
     private String name;
     private boolean activeVideo;
     private boolean activeAudio;
+    private boolean activeSharing;
     public User(String ipAddress, String username, String name) {
         this.ipAddress = ipAddress;
         this.username = username;

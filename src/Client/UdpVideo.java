@@ -53,8 +53,7 @@ public class UdpVideo extends Thread{
             byte[] buf = new byte[50000];
             DatagramPacket receivePacket = new DatagramPacket(buf, buf.length);
             while(true){
-                socket.receive(receivePacket);
-                
+                socket.receive(receivePacket); 
                 byte[] bufs = receivePacket.getData().clone();
                 ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(bufs));
                 Messenger messageRec = (Messenger) iStream.readObject();
@@ -68,7 +67,7 @@ public class UdpVideo extends Thread{
         }
     }
     public void sendToAllClients(byte [] buf) throws UnknownHostException, SocketException, IOException{
-        System.out.println("text sending");
+        System.out.println("video sending");
         InetAddress groupAd = InetAddress.getByName(groupVideo);
         NetworkInterface ni = NetworkInterface.getByName(interfaceN);
         InetSocketAddress groupx = new InetSocketAddress(groupAd, portMultiVideo);
