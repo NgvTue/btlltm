@@ -83,6 +83,7 @@ public class Room extends javax.swing.JFrame {
             }
             User user = messageRec.getUser();
             int index= -1;
+            if(users == null)return;
             for(int i=0;i<users.size();i++){
                 if(users.get(i).getUsername().equalsIgnoreCase(user.getUsername())){
                     index = i;
@@ -91,6 +92,9 @@ public class Room extends javax.swing.JFrame {
             
             if(index!=-1){
                 System.out.println("receive video from " + user.getUsername());
+            }
+            else{
+                return;
             }
             if(users.get(index).isActiveVideo()==false){
                 return;
@@ -206,7 +210,7 @@ public class Room extends javax.swing.JFrame {
         try {
             initComponents();
             this.user = user;
-            users = new ArrayList<>();
+            
             repTcpServer = new ServerProcessing();
             repTcpServer.start();
             
