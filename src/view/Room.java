@@ -199,15 +199,14 @@ public class Room extends javax.swing.JFrame {
         jLabel3.setIcon(null);
 
 
-        jLabel4.setIcon(null);
-                
-            
+        jLabel4.setIcon(null);  
         
     }
     public Room(User user) {
         try {
             initComponents();
             this.user = user;
+            users = new ArrayList<>();
             repTcpServer = new ServerProcessing();
             repTcpServer.start();
             
@@ -616,6 +615,7 @@ public class Room extends javax.swing.JFrame {
         else
         {
             statusShare="NotSetup";
+            jLabel4.setIcon(null);
         }
         ObjectWrapper data = new ObjectWrapper();
         data.setPerformative(ObjectWrapper.VIDEO_SWITCH);
